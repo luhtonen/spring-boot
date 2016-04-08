@@ -30,7 +30,7 @@ dependencies {
     compile("org.springframework.integration:spring-integration-core:${springVersion}")
     compile("org.springframework.integration:spring-integration-ws:${springVersion}")
     compile("org.springframework.integration:spring-integration-xml:${springVersion}")
-    compile("org.springframework.integration:spring-integration-java-dsl:1.1.1.RELEASE")
+    compile("org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE")
     testCompile("junit:junit")
 }
 
