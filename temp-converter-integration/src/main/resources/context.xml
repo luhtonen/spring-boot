@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-ws="http://www.springframework.org/schema/integration/ws"
+       xmlns:int-xml="http://www.springframework.org/schema/integration/xml"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws-2.0.xsd
+		http://www.springframework.org/schema/integration/xml http://www.springframework.org/schema/integration/xml/spring-integration-xml-2.0.xsd">
+
+  <!-- Simple Service -->
+  <int:gateway id="simpleGateway"
+               service-interface="org.elu.integration.converter.TempConverter"
+               default-request-channel="simpleExpression" />
+  <int:service-activator id="expressionConverter"
+                         input-channel="simpleExpression"
+                         expression="(payload - 32) / 9 * 5" />
+
+  <!-- Web Service -->
+  <int:gateway id="wsGateway" service-interface="org.elu.integration.converter.TempConverter"
+               default-request-channel="viaWebService" />
+
+  <int:chain id="wsChain" input-channel="viaWebService">
+    <int:transformer
+        expression="'&lt;FahrenheitToCelsius xmlns=''http://www.w3schools.com/xml/''&gt;&lt;Fahrenheit&gt;XXX&lt;/Fahrenheit&gt;&lt;/FahrenheitToCelsius&gt;'.replace('XXX', payload.toString())" />
+    <int-ws:header-enricher>
+      <int-ws:soap-action value="http://www.w3schools.com/xml/FahrenheitToCelsius"/>
+    </int-ws:header-enricher>
+    <int-ws:outbound-gateway
+        uri="http://www.w3schools.com/xml/tempconvert.asmx?op=FahrenheitToCelsius"/>
+    <int-xml:xpath-transformer
+        xpath-expression="/*[local-name()='FahrenheitToCelsiusResponse']/*[local-name()='FahrenheitToCelsiusResult']"/>
+  </int:chain>
+</beans>
