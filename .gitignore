@@ -3,3 +3,4 @@ build
 .gradle
 gs-integration/tmp
 *.rdb
+build-microservices-with-spring-boot-livelessons/data-elasticsearch/data
