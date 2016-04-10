@@ -3,3 +3,5 @@ build
 .gradle
 
 gs-integration/tmp
+
+*.rdb
